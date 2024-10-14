@@ -1,6 +1,14 @@
 import logging
+import os
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Retrieve the bot token from the environment variable
+TG_TOKEN = os.getenv("TG_TOKEN")
 
 # Set up logging
 logging.basicConfig(
@@ -34,7 +42,7 @@ async def handle_contact(update: Update, context):
     username = user.username if user.username else user.first_name
 
     # Log the username and phone number to a file
-    with open("user_data.txt", "a") as file:
+    with open("user_data.log", "a") as file:
         file.write(f"User's Name: {username}, Phone Number: {phone_number}\n")
 
     # Respond with the user's phone number
@@ -48,11 +56,8 @@ async def handle_message(update: Update, context):
     username = user.username if user.username else user.first_name
 
     # Log the message to a file
-    with open("group_messages.txt", "a") as file:
+    with open("group_messages.log", "a") as file:
         file.write(f"{username}: {message_text}\n")
-
-    # Optionally respond or process the message further
-    # Example: await update.message.reply_text("Message received!")
 
 # Function to handle the /help command
 async def help_command(update: Update, context):
@@ -61,8 +66,13 @@ async def help_command(update: Update, context):
 
 # Main function to set up and run the bot
 def main():
+    # Ensure the token was loaded properly
+    if not TG_TOKEN:
+        logging.error("Bot token not found in .env file")
+        return
+
     # Create the bot with your API token
-    application = ApplicationBuilder().token("TOKEN HEREs").build()
+    application = ApplicationBuilder().token(TG_TOKEN).build()
 
     # Add command handlers
     application.add_handler(CommandHandler("start", start))

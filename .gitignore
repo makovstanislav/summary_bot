@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# data storage
+user_data.log
+group_messages.log
+
 # C extensions
 *.so
 
