@@ -1,6 +1,6 @@
 import logging
 import os
-import json
+import sqlite3
 from datetime import datetime
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters
@@ -18,6 +18,35 @@ logging.basicConfig(
     level=logging.INFO
 )
 logger = logging.getLogger(__name__)
+
+# Database setup
+def setup_database():
+    conn = sqlite3.connect("bot_messages.db")
+    cursor = conn.cursor()
+
+    # Create a table for storing messages
+    cursor.execute('''CREATE TABLE IF NOT EXISTS messages (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        message_id INTEGER,
+                        date TEXT,
+                        username TEXT,
+                        message_content TEXT,
+                        thread_id INTEGER
+                    )''')
+    conn.commit()
+    conn.close()
+
+# Function to insert message data into the SQLite database
+def insert_message(message_id, date, username, message_content, thread_id):
+    conn = sqlite3.connect("bot_messages.db")
+    cursor = conn.cursor()
+
+    # Insert message details into the table
+    cursor.execute('''INSERT INTO messages (message_id, date, username, message_content, thread_id)
+                      VALUES (?, ?, ?, ?, ?)''',
+                   (message_id, date, username, message_content, thread_id))
+    conn.commit()
+    conn.close()
 
 # Function to handle the /start command
 async def start(update: Update, context):
@@ -44,7 +73,7 @@ async def handle_contact(update: Update, context):
 
     await update.message.reply_text(f"Thank you! Your phone number is {phone_number}.")
 
-# Function to handle all messages from the group and log in JSON format
+# Function to handle all messages from the group and store in SQLite
 async def handle_message(update: Update, context):
     if update.message and update.message.text:
         # Get message details
@@ -57,22 +86,14 @@ async def handle_message(update: Update, context):
         # Get the thread ID if the message belongs to a thread (topic)
         thread_id = update.message.message_thread_id if update.message.is_topic_message else None
 
-        # Create a dictionary to store the message details
-        message_data = {
-            "message_id": message_id,
-            "date": date.isoformat(),  # Convert date to ISO format string
-            "username": username,
-            "message_content": message_text,  # Store message content in UTF-8
-            "thread_id": thread_id  # Add thread ID if available
-        }
+        # Convert date to ISO format string
+        date_str = date.isoformat()
 
-        # Log the message data as a JSON object to a file in UTF-8 encoding
-        with open("group_messages.json", "a", encoding='utf-8') as file:
-            file.write(json.dumps(message_data, ensure_ascii=False) + "\n")  # Ensure UTF-8 storage
+        # Insert message data into the SQLite database
+        insert_message(message_id, date_str, username, message_text, thread_id)
 
         # Log to the console for debugging
         logger.info(f"Logged message from {username} (Thread ID: {thread_id}): {message_text}")
-
 
 # Function to handle the /help command
 async def help_command(update: Update, context):
@@ -83,6 +104,9 @@ def main():
     if not TG_TOKEN:
         logging.error("Bot token not found in .env file")
         return
+
+    # Set up the database
+    setup_database()
 
     application = ApplicationBuilder().token(TG_TOKEN).build()
 
