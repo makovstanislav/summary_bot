@@ -6,6 +6,7 @@ __pycache__/
 # data storage
 user_data.log
 group_messages.log
+group_messages.json
 
 # C extensions
 *.so
