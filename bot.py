@@ -109,7 +109,7 @@ def main():
     setup_database()
 
     application = ApplicationBuilder().token(TG_TOKEN).build()
-
+    
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
 
