@@ -56,7 +56,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         logging.info(f"Received summary from Gemini API: {summary}")
 
         # Send the summary back to the user
-        await update.message.reply_text(f"Summary:\n{summary}")
+        await update.message.reply_text(f"Вот о чем они говорили:\n{summary}")
         
         return ConversationHandler.END
     except ValueError:

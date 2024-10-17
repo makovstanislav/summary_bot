@@ -2,3 +2,5 @@ python-telegram-bot
 python-dotenv
 requests
 pytest
+google-generativeai
+httpx
