@@ -1,6 +1,6 @@
 ---
-name: Final project issue template
-about: Describe this issue template's purpose here.
+name: Pasha-bot issue template
+about: Template for the issue.
 title: ''
 labels: ''
 assignees: ''
