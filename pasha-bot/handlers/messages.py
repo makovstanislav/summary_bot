@@ -78,44 +78,23 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
 
         message_block = format_messages(messages)
         prompt = (
-                "Please summarize the following conversations, grouped by threadID (sub-chats), "
+            "Please summarize the following conversations, grouped by threadID (sub-chats), "
             "ranked by the percentage of total messages for each thread, with threads sorted in descending order by the percentage of total messages. "
-            "Ensure that the summary is concise, no longer than 100 words.\n"
-            "For each thread, provide a brief summary that answers the question: 'What happened?'\n"
-            "Use the following format for the summary, and make sure to include a blue circle emoji (🔵) for each thread title and circular bullet points (•) for each item in the summary:\n\n"
+            "Ensure the summary is concise, with a maximum of 100 words per thread.\n"
+            "For each thread, provide a brief, clear summary.\n"
+            "Make sure to include a dark square emoji (▪️) for each thread title and circular bullet points (•) for each item in the summary:\n\n"
+                
+            "▪️ Thread [threadID] – [percentage of total messages]%\n\n"
+            "  • [Short, straightforward point summarizing key event in this thread].\n\n"
+
+            "Ensure that the summary is clear, minimalist, and only includes essential information.\n"
+            "Keep the number of points as low as possible. Aim for maximum brevity and clarity in each point. "
+            "Prioritize concise, factual statements without unnecessary elaboration.\n\n"
+
+            "Your goal is to deliver the most concise and clear summary possible while capturing the essence of each conversation thread."
             
-            "🔵 Thread: [threadID] – [percentage of total messages]%\n\n"
-            "  • [Brief summary of what happened in this thread, in short, easy-to-read bullet points].\n\n"
-
-            "Ensure the summary is clear, minimalist, and provides the essential information.\n\n"
-            
-            "Example structure:\n\n"
-
-            "🔵 Thread 14115 – [percentage of total messages]%\n\n"
-            "  • The group discussed plans for a Rome trip, possibly renting a bus for a party.\n"
-            "  • Jokes about clubs and growing teeth\n"
-            "  • Work procedures, including the need for a 'token,' were discussed.'\n\n"
-
-            "🔵 Thread 15982 – [percentage of total messages]%\n\n"
-            "  • vvtea praised something and jokingly asked to be invited to mystique4u's place.\n\n"
-
-            "🔵 Thread None – [percentage of total messages]%\n\n"
-            "  • Olga_lesyk shared her experience meeting a Kazakh colleague at work.\n"
-            "  • The group discussed  work, remote tasks, rising food prices, and a potential trip to Germany.\n"
-            "  • LiubovKulyk shared news of Ukrainians trolling Russians in St. Petersburg.\n\n"
-
-            "🔵 Thread 14133 – [percentage of total messages]%\n\n"
-            "  • Bot development, its features, and integration with Gemini API.\n"
-            "  • Mystique4u suggested code restructuring and new bot features.\n\n"
-
-            "🔵 Thread 14122 – [percentage of total messages]%\n\n"
-            "  • The group discussed using Elementor for website creation.\n"
-            "  • They debated its flexibility, pros, and challenges.\n\n"
-
-            "🔵 Thread 14909 – [percentage of total messages]%\n\n"
-            "  • Upcoming hackathon in Lucerne was announces.\n"
-                f"Conversations:\n\n{message_block}"
-            )
+            f"Conversations:\n\n{message_block}"
+        )
         
         logging.info(f"Generated prompt for Gemini API: {prompt}")
 
@@ -124,7 +103,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         logging.info(f"Received summary from Gemini API: {summary}")
 
         # Send the summary back to the user
-        await update.message.reply_text(f"Here's what you missed:\n\n{summary}")
+        await update.message.reply_text(f"Here's what happened:\n\n{summary}")
         
         return ConversationHandler.END
     except ValueError:
