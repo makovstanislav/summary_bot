@@ -80,19 +80,19 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
 
         # Prepare the prompt for the Gemini API
         prompt = (
-            "Please summarize the following conversations grouped by threadID (chat topic).\n"
-            "For each thread, provide a brief summary of the key points discussed.\n"
-            "Use the following format for the summary:\n"
-            "- Thread: [threadID]\n"
-            "  - Key points: [Brief summary of the most important messages in this thread].\n"
-            "Please make sure the summary is easy to read and concise.\n\n"
-            "Here is an example of the structure:\n"
-            "- Thread: 14133\n"
-            "  - Key points: Discussion about social interactions, jokes, and invitations to meet up.\n"
-            "- Thread: 14115\n"
-            "  - Key points: Olga discussed a funny moment about Lubas's milk teeth.\n\n"
-            f"Conversations:\n{message_block}"
-        )
+        "Please summarize the following conversations grouped by threadID (sub chat).\n"
+        "For each thread, provide a brief summary of the key points discussed.\n"
+        "Use the following format for the summary:\n"
+        "Thread: [threadID]\n"
+        "  - [Brief summary of the most important messages in this thread].\n"
+        "Please make sure the summary is easy to read and concise.\n\n"
+        "Here is an example of the structure:\n"
+        "Thread: 14133\n"
+        "  - Discussion about social interactions, jokes, and invitations to meet up.\n"
+        "Thread: 14115\n"
+        "  - Olga discussed a funny moment about Lubas's milk teeth.\n\n"
+        f"Conversations:\n\n{message_block}"
+    )
         logging.info(f"Generated prompt for Gemini API: {prompt}")
 
         # Call the Gemini API and get the summary
@@ -100,7 +100,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         logging.info(f"Received summary from Gemini API: {summary}")
 
         # Send the summary back to the user
-        await update.message.reply_text(f"Вот о чем они говорили:\n{summary}")
+        await update.message.reply_text(f"Here's what you missed:\n\n{summary}")
         
         return ConversationHandler.END
     except ValueError:
@@ -115,14 +115,25 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         await update.message.reply_text("An error occurred while processing your request. Please try again.")
         return ConversationHandler.END
 
-# Format the last N messages into plain text
+# Format the last N messages into plain text, grouped by thread_id
 def format_messages(messages):
     formatted_messages = []
     
     try:
-        for thread_id, username, date, message_content in messages:  # Unpack all four values
-            logging.info(f"Formatting message: {username}, {date}, {message_content}")
-            formatted_messages.append(f"[{date}] {username}: {message_content}")
+        # Group messages by thread_id
+        grouped_messages = {}
+        for thread_id, username, date, message_content in messages:
+            if thread_id not in grouped_messages:
+                grouped_messages[thread_id] = []
+            grouped_messages[thread_id].append((username, date, message_content))
+        
+        # Format messages for each thread
+        for thread_id, msgs in grouped_messages.items():
+            formatted_messages.append(f"- Thread: {thread_id}")
+            for username, date, message_content in msgs:
+                logging.info(f"Formatting message: {username}, {date}, {message_content}")
+                formatted_messages.append(f"  - [{date}] {username}: {message_content}")
+            formatted_messages.append("")  # Add a blank line between threads
     except Exception as e:
         logging.error(f"Error formatting messages: {str(e)}")
         raise e  # Rethrow the exception after logging it
