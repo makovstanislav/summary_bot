@@ -6,11 +6,42 @@ from config import GEMINI_API_KEY
 import google.generativeai as genai
 
 # Load the Gemini API key from the .env file
-
 genai.configure(api_key=GEMINI_API_KEY)
 
 # Conversation states for getting user input
 ASK_MESSAGE_COUNT = 1
+
+# Function to call the Gemini API for a summary
+def get_gemini_summary(prompt: str) -> str:
+    # Define the model configuration
+    generation_config = {
+        "temperature": 1,
+        "top_p": 0.95,
+        "top_k": 64,
+        "max_output_tokens": 8192,
+        "response_mime_type": "text/plain",
+    }
+
+    try:
+        # Log before making the API request
+        logging.info(f"Sending prompt to Gemini API: {prompt}")
+
+        # Create the model
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            generation_config=generation_config,
+        )
+
+        # Start a conversation and send the prompt
+        chat_session = model.start_chat()
+        response = chat_session.send_message(f"{prompt}")
+
+        logging.info(f"Received response from Gemini API: {response}")
+
+        return response.text if response else "No response from the Gemini API."
+    except Exception as e:
+        logging.error(f"Error in Gemini API call: {str(e)}")
+        return "An error occurred while calling the Gemini API."
 
 # Function to ask the user how many messages they want summarized
 async def get_summary(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -49,14 +80,19 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
 
         # Prepare the prompt for the Gemini API
         prompt = (
-            "Here's what you missed:\n"
-            "- Summarize the following conversations in a useful and easy-to-digest manner.\n"
-            "Please format the summary like the following example:\n"
-            "\"Here's what you missed:\n"
-            "- Dad asked who is coming for dinner - Emy, Kirill, and Jessica approved and asked what to bring - Dave, Ria, and Mom responded with happy stickers.\"\n\n"
+            "Please summarize the following conversations grouped by threadID (chat topic).\n"
+            "For each thread, provide a brief summary of the key points discussed.\n"
+            "Use the following format for the summary:\n"
+            "- Thread: [threadID]\n"
+            "  - Key points: [Brief summary of the most important messages in this thread].\n"
+            "Please make sure the summary is easy to read and concise.\n\n"
+            "Here is an example of the structure:\n"
+            "- Thread: 14133\n"
+            "  - Key points: Discussion about social interactions, jokes, and invitations to meet up.\n"
+            "- Thread: 14115\n"
+            "  - Key points: Olga discussed a funny moment about Lubas's milk teeth.\n\n"
             f"Conversations:\n{message_block}"
         )
-
         logging.info(f"Generated prompt for Gemini API: {prompt}")
 
         # Call the Gemini API and get the summary
@@ -93,7 +129,6 @@ def format_messages(messages):
     
     return "\n".join(formatted_messages)
 
-
 # Function to handle all messages and store them in the database
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.text:
@@ -110,36 +145,4 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Log for debugging purposes
         logging.info(f"Stored message from {username} (ID: {message_id}) in the database.")
-
-# Function to call the Gemini API for a summary
-def get_gemini_summary(prompt: str) -> str:
-    # Define the model configuration
-    generation_config = {
-        "temperature": 1,
-        "top_p": 0.95,
-        "top_k": 64,
-        "max_output_tokens": 8192,
-        "response_mime_type": "text/plain",
-    }
-
-    try:
-        # Log before making the API request
-        logging.info(f"Sending prompt to Gemini API: {prompt}")
-
-        # Create the model
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            generation_config=generation_config,
-        )
-
-        # Start a conversation and send the prompt
-        chat_session = model.start_chat()
-        response = chat_session.send_message(f"{prompt}")
-
-        logging.info(f"Received response from Gemini API: {response}")
-
-        return response.text if response else "No response from the Gemini API."
-    except Exception as e:
-        logging.error(f"Error in Gemini API call: {str(e)}")
-        return "An error occurred while calling the Gemini API."
 
