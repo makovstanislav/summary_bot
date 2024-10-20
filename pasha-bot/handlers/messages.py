@@ -78,21 +78,47 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
 
         message_block = format_messages(messages)
         prompt = (
-            "Summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread. Sort the threads in descending order of total messages."
-            "Ensure the summary captures key, interesting facts, decisions, or notable events in the conversation, avoiding unnecessary abstractions."
-            "Focus on making the summary engaging and concise by highlighting what was new or noteworthy. Avoid vague phrasing and emphasize novel insights or outcomes."
-            "No more than 2 bullet points per thread, with a maximum of 12 words per bullet point. Each bullet point should reflect a key fact, decision, or action from the conversation.\n"
-            
-            "For each thread, use this format:\n\n"
-            
-            "🔵 Thread [threadID] – [percentage of total messages]% (whole number)\n"
-            "  • [Concise, engaging key fact or outcome 1].\n"
-            "  • [Concise, engaging key fact or outcome 2].\n\n"
-            
-            "Ensure the summary is clear, detailed, and interesting, while avoiding unnecessary information or generic statements."
-            
-            f"Conversations:\n\n{message_block}"
-        )
+    "Please summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread. "
+    "Ensure the summary captures key, interesting facts, outcomes, or notable events from the conversations. Avoid unnecessary details or generic phrases. "
+    "Focus on what participants shared or discussed, and avoid abstract statements. Each thread should reflect the main ideas clearly.\n"
+    
+    "For each thread, use this format:\n\n"
+    
+    "🔵 Thread: [threadID] – [percentage of total messages]%\n"
+    "  • [Key fact, outcome, or insight 1].\n"
+    "  • [Key fact, outcome, or insight 2].\n\n"
+    
+    "Ensure the summary is clear, concise, and engaging, focusing on what was shared or discussed in a meaningful way.\n\n"
+    
+    "Here’s an example of the structure:\n\n"
+
+    "🔵 Thread: None – [percentage of total messages]%\n"
+    "  • Сергей рассказал о своем опыте работы над новым проектом.\n"
+    "  • Обсуждались сложности в управлении временем и баланс между работой и личной жизнью.\n"
+    "  • Анна поделилась новостями о повышении на работе и планах на отпуск.\n\n"
+    
+    "🔵 Thread: 14156 – [percentage of total messages]%\n"
+    "  • Группа обсуждала покупку недвижимости и текущие ставки по ипотеке.\n"
+    "  • Было отмечено, что цены на квартиры растут в крупных городах.\n\n"
+    
+    "🔵 Thread: 14201 – [percentage of total messages]%\n"
+    "  • Алексей рассказал о подготовке к марафону и поделился планом тренировок.\n"
+    "  • Обсуждались способы улучшения выносливости и диетические привычки для спортсменов.\n\n"
+    
+    "🔵 Thread: 14897 – [percentage of total messages]%\n"
+    "  • Группа обсуждала планы на летние отпуска и лучшие направления для путешествий.\n"
+    "  • Елена упомянула, что собирается посетить Грецию и поделилась своими маршрутами.\n\n"
+    
+    "🔵 Thread: 14653 – [percentage of total messages]%\n"
+    "  • Обсуждалось открытие нового ресторана в центре города.\n"
+    "  • Участники делились впечатлениями о кухне и обслуживании.\n\n"
+    
+    "🔵 Thread: 14482 – [percentage of total messages]%\n"
+    "  • Иван сообщил о запуске нового стартапа в области IT.\n"
+    "  • Участники обменялись советами по развитию бизнеса и маркетингу.\n\n"
+    
+    f"Conversations:\n\n{message_block}"
+)
         
         logging.info(f"Generated prompt for Gemini API: {prompt}")
 
