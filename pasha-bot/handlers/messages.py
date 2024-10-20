@@ -48,7 +48,15 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         message_block = format_messages(messages)
 
         # Prepare the prompt for the Gemini API
-        prompt = f"Пожалуйста, подведите итоги следующих бесед:\n\n{message_block}"
+        prompt = (
+            "Here's what you missed:\n"
+            "- Summarize the following conversations in a useful and easy-to-digest manner.\n"
+            "Please format the summary like the following example:\n"
+            "\"Here's what you missed:\n"
+            "- Dad asked who is coming for dinner - Emy, Kirill, and Jessica approved and asked what to bring - Dave, Ria, and Mom responded with happy stickers.\"\n\n"
+            f"Conversations:\n{message_block}"
+        )
+
         logging.info(f"Generated prompt for Gemini API: {prompt}")
 
         # Call the Gemini API and get the summary
