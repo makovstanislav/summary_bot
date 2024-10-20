@@ -80,15 +80,16 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         # Now we use it in the prompt
         prompt = (
             "Please summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread, with threads sorted in descending order. "
-            "Ensure the summary is concise, with a maximum of 2 bullet points per thread and no more than 10 words per bullet point.\n"
+            "Ensure the summary is concise, capturing key outcomes or decisions made in the conversation. "
+            "Limit to a maximum of 2 bullet points per thread, focusing on both the discussion and its results. No more than 12 words per bullet point.\n"
             
             "For each thread, use this format:\n\n"
             
             "🔵 Thread [threadID] – [percentage of total messages]% (whole number)\n"
-            "  • [Key event or discussion point 1].\n"
-            "  • [Key event or discussion point 2].\n\n"
+            "  • [Key outcome or decision 1].\n"
+            "  • [Key discussion point 2].\n\n"
             
-            "Ensure the summary captures only the essential facts, prioritizing clarity and brevity, and round the percentages to whole numbers."
+            "Ensure the summary captures outcomes, key facts, and decisions, prioritizing clarity and brevity."
             
             f"Conversations:\n\n{message_block}"
         )
