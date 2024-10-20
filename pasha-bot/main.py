@@ -23,7 +23,7 @@ def main():
 
     # Initialize the bot
     application = ApplicationBuilder().token(TG_TOKEN).build()
-
+    
     # Add conversation handler for summarization input
     conv_handler = ConversationHandler(
         entry_points=[MessageHandler(filters.TEXT & filters.Regex(r"🚀 Get summary"), get_summary)],
