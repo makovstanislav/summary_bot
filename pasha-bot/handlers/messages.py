@@ -77,19 +77,19 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
             return ConversationHandler.END
 
         message_block = format_messages(messages)
-        # Now we use it in the prompt
         prompt = (
-            "Please summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread, with threads sorted in descending order. "
-            "Ensure the summary is concise, capturing key outcomes or decisions made in the conversation. "
-            "Limit to a maximum of 2 bullet points per thread, focusing on both the discussion and its results. No more than 12 words per bullet point.\n"
+            "Summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread. Sort the threads in descending order of total messages."
+            "Ensure the summary captures key, interesting facts, decisions, or notable events in the conversation, avoiding unnecessary abstractions."
+            "Focus on making the summary engaging and concise by highlighting what was new or noteworthy. Avoid vague phrasing and emphasize novel insights or outcomes."
+            "No more than 2 bullet points per thread, with a maximum of 12 words per bullet point. Each bullet point should reflect a key fact, decision, or action from the conversation.\n"
             
             "For each thread, use this format:\n\n"
             
             "🔵 Thread [threadID] – [percentage of total messages]% (whole number)\n"
-            "  • [Key outcome or decision 1].\n"
-            "  • [Key discussion point 2].\n\n"
+            "  • [Concise, engaging key fact or outcome 1].\n"
+            "  • [Concise, engaging key fact or outcome 2].\n\n"
             
-            "Ensure the summary captures outcomes, key facts, and decisions, prioritizing clarity and brevity."
+            "Ensure the summary is clear, detailed, and interesting, while avoiding unnecessary information or generic statements."
             
             f"Conversations:\n\n{message_block}"
         )
