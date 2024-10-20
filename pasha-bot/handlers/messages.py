@@ -77,21 +77,18 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
             return ConversationHandler.END
 
         message_block = format_messages(messages)
+        # Now we use it in the prompt
         prompt = (
-            "Please summarize the following conversations, grouped by threadID (sub-chats), "
-            "ranked by the percentage of total messages for each thread, with threads sorted in descending order by the percentage of total messages. "
-            "Ensure the summary is concise, with a maximum of 100 words per thread.\n"
-            "For each thread, provide a brief, clear summary.\n"
-            "Make sure to include a dark square emoji (▪️) for each thread title and circular bullet points (•) for each item in the summary:\n\n"
-                
-            "▪️ Thread [threadID] – [percentage of total messages]%\n\n"
-            "  • [Short, straightforward point summarizing key event in this thread].\n\n"
-
-            "Ensure that the summary is clear, minimalist, and only includes essential information.\n"
-            "Keep the number of points as low as possible. Aim for maximum brevity and clarity in each point. "
-            "Prioritize concise, factual statements without unnecessary elaboration.\n\n"
-
-            "Your goal is to deliver the most concise and clear summary possible while capturing the essence of each conversation thread."
+            "Please summarize the following conversations grouped by threadID (sub-chats), ranked by the percentage of total messages for each thread, with threads sorted in descending order. "
+            "Ensure the summary is concise, with a maximum of 2 bullet points per thread and no more than 10 words per bullet point.\n"
+            
+            "For each thread, use this format:\n\n"
+            
+            "🔵 Thread [threadID] – [percentage of total messages]% (whole number)\n"
+            "  • [Key event or discussion point 1].\n"
+            "  • [Key event or discussion point 2].\n\n"
+            
+            "Ensure the summary captures only the essential facts, prioritizing clarity and brevity, and round the percentages to whole numbers."
             
             f"Conversations:\n\n{message_block}"
         )
