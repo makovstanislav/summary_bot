@@ -30,21 +30,20 @@ def insert_message(message_id, date, username, message_content, thread_id):
     conn.commit()
     conn.close()
 
-# Fetch the last N messages ordered by date, optionally grouped by thread_id
+# Fetch the last N messages ordered by date
 def fetch_last_n_messages(n):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
-    
-    # Fetch the last N messages ordered by date
+
+    # Fetch the last N messages ordered by date, including thread_id = None
     cursor.execute("""
         SELECT thread_id, username, date, message_content
         FROM messages
         ORDER BY date DESC
         LIMIT ?
     """, (n,))
-    
+
     messages = cursor.fetchall()
     conn.close()
-    
-    # Return messages without grouping by thread_id
+
     return messages
