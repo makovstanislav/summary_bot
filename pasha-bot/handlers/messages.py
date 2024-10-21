@@ -101,7 +101,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         prompt = (
             "Summarize the following conversations grouped by threadID (sub-chats), sort threads based on the volume of messages. "
             "Ensure the summary captures key facts, main topics, insights, or decisions made in each conversation, without excessive abstraction or redundancy. "
-            "Focus on what was new, noteworthy, or decided during the discussion. Focus only on the most important threads, excluding trivial mentions. Limit the summary to no more than 1-4 bullet points per thread. "
+            "Focus on what was new, noteworthy, or decided during the discussion. Focus only on the most important threads, excluding trivial mentions. Limit the summary to no more than 1-3 bullet points per thread. "
             "Omit threads where messages lack meaningful content or reactions. If no significant interaction or follow-up occurred, omit the thread from the summary entirely. "
             "Make the summary engaging, concise, and useful, highlighting conclusions where possible. "
             "If there are no significant results or conclusions, do not force multiple bullet points—keep the summary minimal.\n"
