@@ -9,10 +9,14 @@ import google.generativeai as genai
 THREAD_MAPPING = {
     14133: "Паша-бот",
     14909: "Вопросник ❓",
-    15982: "Дофамин"
+    15982: "Дофамин",
     16988: "MusicOnly 🕺",
     17191: "Run, POCO, run! 🏆",
-    14115: "Встречи 💃"
+    14115: "Встречи 💃",
+    19276: "Network",
+    17862: "Рабство вечное ?",
+    18223: "Читальный зал",
+    14122: "ИТ помощь",
     None: "Женераль #️⃣"
 }
 
@@ -219,9 +223,10 @@ def format_messages(messages):
                 grouped_messages[thread_id] = []
             grouped_messages[thread_id].append((username, date, message_content))
         
-        # Format messages for each thread
+        # Format messages for each thread using thread_name
         for thread_id, msgs in grouped_messages.items():
-            formatted_messages.append(f"Thread: {thread_id}")
+            thread_name = get_thread_name(thread_id)  # Using thread_name instead of thread_id
+            formatted_messages.append(f"🔵 {thread_name}")
             for username, date, message_content in msgs:
                 logging.info(f"Formatting message: {username}, {date}, {message_content}")
                 formatted_messages.append(f"  - [{date}] {username}: {message_content}")
@@ -242,6 +247,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = update.effective_user
         username = user.username if user.username else user.first_name
         thread_id = update.message.message_thread_id if update.message.is_topic_message else None
+
+        # Optionally log the thread_name
+        thread_name = get_thread_name(thread_id)
+        logging.info(f"Thread Name: {thread_name}")
 
         # Insert the message into the SQLite database
         insert_message(message_id, date, username, message_text, thread_id)
