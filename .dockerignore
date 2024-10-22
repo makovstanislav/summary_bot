@@ -1,0 +1,28 @@
+# Ignore the .git directory
+.git
+
+# Ignore Python cache files
+__pycache__
+*.pyc
+*.pyo
+
+# Ignore virtual environment directories
+venv/
+ENV/
+env/
+
+# Ignore local environment variables file
+.env
+
+# Ignore any logs
+*.log
+
+# Ignore any temporary files or directories
+tmp/
+*.swp
+*.swo
+
+# Ignore any other unnecessary files or directories
+.DS_Store
+*.bak
+*.tmp

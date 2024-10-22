@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  pasha-bot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TG_TOKEN: ${TG_TOKEN}
+        GEMINI_API_KEY: ${GEMINI_API_KEY}
+        DB_PATH: ${DB_PATH}
+    environment:
+      - TG_TOKEN=${TG_TOKEN}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DB_PATH=${DB_PATH}
