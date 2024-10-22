@@ -68,7 +68,7 @@ def run_async_task():
 
 # Set up the scheduler to run the task at 07:10 AM every day
 scheduler = BlockingScheduler(timezone=LOCAL_TZ)
-scheduler.add_job(run_async_task, 'cron', hour=17, minute=41)
+scheduler.add_job(run_async_task, 'cron', hour=18, minute=41)
 
 # Start the scheduler
 if __name__ == "__main__":
