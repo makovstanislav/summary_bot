@@ -80,14 +80,14 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         date = update.message.date.isoformat()
         user = update.effective_user
         username = user.username if user.username else user.first_name
-        thread_id = update.message.message_thread_id if update.message.is_topic_message else None
-        chat_id = update.message.chat_id
+        thread_id = update.message.message_thread_id if update.message.is_topic_message else 10000
 
         # Log for debugging purposes
-        logging.info(f"Handling message from {username} (ID: {message_id}) in thread {thread_id} and chat {chat_id}.")
-        
+        logging.info(f"Handling message from {username} (ID: {message_id}) in thread {thread_id}.")
+
         # Insert the message into the SQLite database
         insert_message(message_id, date, username, message_text, thread_id)
 
         # Log the successful storage
         logging.info(f"Stored message from {username} (ID: {message_id}) in the database.")
+        

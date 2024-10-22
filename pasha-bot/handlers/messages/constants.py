@@ -2,6 +2,7 @@
 
 # --- Static Mapping for thread_id to thread_name ---
 THREAD_MAPPING = {
+    10000: "☕️ Женераль",
     14133: "🚀 Паша-бот",
     14909: "❓ Вопросник",
     15982: "😄 Дофамин",
@@ -11,8 +12,7 @@ THREAD_MAPPING = {
     19276: "🌐 Network",
     17862: "🌀 Рабство вечное ?",
     18223: "📚 Читальный зал",
-    14122: "👩🏻‍💻 ИТ помощь",
-    None: "☕️ Женераль"
+    14122: "👩🏻‍💻 ИТ помощь"
 }
 
 # Function to get thread_name from thread_id

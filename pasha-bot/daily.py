@@ -33,17 +33,11 @@ async def send_daily_summary():
         # Fetch messages from the last 24 hours
         messages = fetch_messages_by_date_range(start_time, end_time)
 
-        # Log fetched messages
-        logging.info(f"Fetched messages: {messages}")
-
         # Format the messages into a block and build the prompt
         message_block = format_messages(messages)
 
         # Create the prompt for the Gemini API
         prompt = build_prompt(message_block)
-
-        # Log the generated prompt
-        logging.info(f"Generated prompt for Gemini API: {prompt}")
 
         # Get the summary from the Gemini API
         summary = get_gemini_summary(prompt)
@@ -74,7 +68,7 @@ def run_async_task():
 
 # Set up the scheduler to run the task at 07:10 AM every day
 scheduler = BlockingScheduler(timezone=LOCAL_TZ)
-scheduler.add_job(run_async_task, 'cron', hour=2, minute=17)
+scheduler.add_job(run_async_task, 'cron', hour=14, minute=2)
 
 # Start the scheduler
 if __name__ == "__main__":
@@ -83,3 +77,4 @@ if __name__ == "__main__":
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
+
