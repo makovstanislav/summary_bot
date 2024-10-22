@@ -15,7 +15,7 @@ def get_gemini_summary(prompt: str) -> str:
         "max_output_tokens": 8192,
         "response_mime_type": "text/plain",
     }
-
+    
     try:
         # Log before making the API request
         logging.info(f"Sending prompt to Gemini API: {prompt}")

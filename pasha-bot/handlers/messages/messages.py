@@ -32,7 +32,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         if message_count <= 0:
             await update.message.reply_text("Пожалуйста, введите положительное число.")
             return ASK_MESSAGE_COUNT
-
+        
         # Fetch the last N messages from the database
         logging.info(f"Fetching the last {message_count} messages from the database")
         messages = fetch_last_n_messages(message_count)
@@ -80,7 +80,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         date = update.message.date.isoformat()
         user = update.effective_user
         username = user.username if user.username else user.first_name
-        thread_id = update.message.message_thread_id if update.message.is_topic_message else None
+        thread_id = update.message.message_thread_id if update.message.is_topic_message else 10000
 
         # Log for debugging purposes
         logging.info(f"Handling message from {username} (ID: {message_id}) in thread {thread_id}.")
@@ -90,3 +90,4 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         # Log the successful storage
         logging.info(f"Stored message from {username} (ID: {message_id}) in the database.")
+        
