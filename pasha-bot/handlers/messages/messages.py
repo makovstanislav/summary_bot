@@ -72,7 +72,6 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         return ConversationHandler.END
 
 # Function to handle all messages and store them in the database
-# Function to handle all messages and store them in the database
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message and update.message.text:
         # Capture message details
@@ -82,7 +81,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user = update.effective_user
         username = user.username if user.username else user.first_name
         thread_id = update.message.message_thread_id if update.message.is_topic_message else None
-        chat_id = update.message.chat_id  # Add this line to capture chat_id
+        chat_id = update.message.chat_id
 
         # Log for debugging purposes
         logging.info(f"Handling message from {username} (ID: {message_id}) in thread {thread_id} and chat {chat_id}.")
