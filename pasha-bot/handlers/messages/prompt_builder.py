@@ -3,6 +3,7 @@ def build_prompt(message_block):
     prompt = (
         "Summarize the following conversations grouped by threadID (sub-chats), sort threads based on the volume of messages. "
         "Ensure the summary captures key facts, main topics, insights, or decisions made in each conversation, without excessive abstraction or redundancy. "
+        "Use bullet points (•) to list important points under each thread. However, avoid using any additional formatting such as bold, italics, or headers. "
         "Focus on what was new, noteworthy, or decided during the discussion. Focus only on the most important threads, excluding trivial mentions. Limit the summary to no more than 1-3 bullet points per thread. "
         "Omit threads where messages lack meaningful content or reactions. If no significant interaction or follow-up occurred, omit the thread from the summary entirely. "
         "Make the summary engaging, concise, and useful, highlighting conclusions where possible. "

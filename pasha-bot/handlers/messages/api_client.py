@@ -1,3 +1,4 @@
+
 import logging
 import google.generativeai as genai
 from config import GEMINI_API_KEY
@@ -18,7 +19,7 @@ def get_gemini_summary(prompt: str) -> str:
     try:
         # Log before making the API request
         logging.info(f"Sending prompt to Gemini API: {prompt}")
-        
+
         # Create the model
         model = genai.GenerativeModel(
             model_name="gemini-1.5-flash",
