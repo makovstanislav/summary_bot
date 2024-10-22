@@ -55,7 +55,7 @@ async def send_daily_summary():
         await bot.send_message(
             chat_id=DAILY_SUMMARY_CHAT_ID,
             text=f"📋 Ежедневное саммари:\n\n{formatted_summary}",
-            message_thread_id=20284  # Replace with the correct thread ID
+            message_thread_id=20284
         )
         logger.info("Successfully sent the daily summary")
     
@@ -68,7 +68,7 @@ def run_async_task():
 
 # Set up the scheduler to run the task at 07:10 AM every day
 scheduler = BlockingScheduler(timezone=LOCAL_TZ)
-scheduler.add_job(run_async_task, 'cron', hour=14, minute=2)
+scheduler.add_job(run_async_task, 'cron', hour=14, minute=33)
 
 # Start the scheduler
 if __name__ == "__main__":

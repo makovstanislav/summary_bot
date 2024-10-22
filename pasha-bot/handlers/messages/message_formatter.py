@@ -19,7 +19,7 @@ def format_messages(messages):
         
         # Format messages for each thread using thread_id
         for thread_id, msgs in sorted_threads:
-            formatted_messages.append(f"🔵 Thread {thread_id}")
+            formatted_messages.append(f"Thread {thread_id}")
             for username, date, message_content in reversed(msgs):  # Reverse to get chronological order
                 logging.info(f"Formatting message: {username}, {date}, {message_content}")
                 formatted_messages.append(f"  - [{date}] {username}: {message_content}")
