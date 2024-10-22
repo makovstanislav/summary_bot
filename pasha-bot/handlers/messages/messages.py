@@ -32,7 +32,7 @@ async def process_message_count(update: Update, context: ContextTypes.DEFAULT_TY
         if message_count <= 0:
             await update.message.reply_text("Пожалуйста, введите положительное число.")
             return ASK_MESSAGE_COUNT
-
+        
         # Fetch the last N messages from the database
         logging.info(f"Fetching the last {message_count} messages from the database")
         messages = fetch_last_n_messages(message_count)

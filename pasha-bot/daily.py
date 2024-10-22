@@ -68,7 +68,7 @@ def run_async_task():
 
 # Set up the scheduler to run the task at 07:10 AM every day
 scheduler = BlockingScheduler(timezone=LOCAL_TZ)
-scheduler.add_job(run_async_task, 'cron', hour=14, minute=33)
+scheduler.add_job(run_async_task, 'cron', hour=15, minute=19)
 
 # Start the scheduler
 if __name__ == "__main__":
@@ -77,4 +77,3 @@ if __name__ == "__main__":
         scheduler.start()
     except (KeyboardInterrupt, SystemExit):
         logger.info("Scheduler stopped.")
-
