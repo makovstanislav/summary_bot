@@ -26,3 +26,4 @@ tmp/
 .DS_Store
 *.bak
 *.tmp
+bot_messages.db
