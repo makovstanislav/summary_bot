@@ -1,0 +1,32 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: Create directory for environment file
+      file:
+        path: /home/{{ ansible_user }}/dev/apps/{{ app_name }}
+        state: directory
+        mode: '0755'
+
+    - name: Remove existing container (if exists)
+      shell: |
+        docker stop {{ app_name }} || true
+        docker rm {{ app_name }} || true
+      ignore_errors: yes
+
+    - name: Pull the latest Docker image
+      shell: docker pull {{ dockerhub_username }}/{{ app_name }}:latest
+
+    - name: Create environment file with secrets
+      copy:
+        dest: /home/{{ ansible_user }}/dev/apps/{{ app_name }}/app_env.env
+        content: |
+          TG_TOKEN={{ tg_token }}
+          GEMINI_API_KEY={{ gemini_api_key }}
+      mode: '0644'
+
+    - name: Run the new container
+      shell: |
+        docker run -d --name {{ app_name }} \
+        --env-file /home/{{ ansible_user }}/dev/apps/{{ app_name }}/app_env.env \
+        {{ dockerhub_username }}/{{ app_name }}:latest

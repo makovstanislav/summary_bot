@@ -1,23 +1,36 @@
-name: Deploy
+name: Deploy Application
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout the repository
+        uses: actions/checkout@v3
 
-    - name: Run Ansible Playbook
-      uses: dawidd6/action-ansible-playbook@v2
-      with:
-        playbook: deploy.yml
-      env:
-        GITHUB_SECRET_VAR1: ${{ secrets.VAR1 }}
-        GITHUB_SECRET_VAR2: ${{ secrets.VAR2 }}
+      - name: Set up SSH Agent
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Deploy using Ansible
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: 'false'
+          app_name: pasha-bot
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          tg_token: ${{ secrets.TG_TOKEN }}
+          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
+          ansible_user: ${{ secrets.USERNAME }}
+        run: |
+          ansible-playbook -i ${{ secrets.SERVER_IP }}, playbook.yml --extra-vars "ansible_user=${{ secrets.USERNAME }}"
+
