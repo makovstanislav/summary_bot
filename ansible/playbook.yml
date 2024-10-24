@@ -8,13 +8,13 @@
         export DOCKERHUB_USERNAME={{ DOCKERHUB_USERNAME }}
         export TG_TOKEN={{ TG_TOKEN }}
         export GEMINI_API_KEY={{ GEMINI_API_KEY }}
-        export ANSIBLE_USER={{ USERNAME }}
+        export USERNAME={{ USERNAME }}
       environment:
         APP_NAME: "{{ APP_NAME }}"
         DOCKERHUB_USERNAME: "{{ DOCKERHUB_USERNAME }}"
         TG_TOKEN: "{{ TG_TOKEN }}"
         GEMINI_API_KEY: "{{ GEMINI_API_KEY }}"
-        ANSIBLE_USER: "{{ USERNAME }}"
+        USERNAME: "{{ USERNAME }}"
 
     - name: Create directory for the app (if necessary)
       file:
