@@ -7,31 +7,47 @@ on:
       - completed
 
 jobs:
-  deploy:
+  ansible:
+    name: Configure VM with Ansible
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH Agent
-        uses: webfactory/ssh-agent@v0.5.4
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
       - name: Install Ansible
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ansible
+        run: sudo apt update && sudo apt install -y ansible
 
-      - name: Deploy using Ansible
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: 'false'
-          app_name: pasha-bot
-          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
-          tg_token: ${{ secrets.TG_TOKEN }}
-          gemini_api_key: ${{ secrets.GEMINI_API_KEY }}
-          ansible_user: ${{ secrets.USERNAME }}
+      - name: Add Private SSH Key for Ansible
         run: |
-          ansible-playbook -i ${{ secrets.SERVER_IP }}, ansible/playbook.yml --extra-vars "ansible_user=${{ secrets.USERNAME }}"
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          ANSIBLE_SSH_PRIVATE_KEY_FILE: ~/.ssh/id_rsa
+
+      - name: Update Ansible Inventory with Public IP
+        run: |
+          sed -i "s/{{ public_ip }}/${{ secrets.SERVER_IP }}/g" inventory.yml
+        working-directory: ./ansible
+
+      - name: Update Ansible Inventory with sudo user
+        run: |
+          sed -i "s/{{ sudo_user }}/${{ secrets.USERNAME }}/g" inventory.yml
+        working-directory: ./ansible
+
+      - name: Check Ansible Inventory
+        run: cat inventory.yml
+        working-directory: ./ansible
+
+      - name: Run Ansible Playbook
+        env:
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+          APP_NAME: pasha-bot
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANSIBLE_USER: ${{ secrets.USERNAME }}
+        run: ansible-playbook -i inventory.yml playbook.yml --extra-vars "APP_NAME=$APP_NAME DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME TG_TOKEN=$TG_TOKEN GEMINI_API_KEY=$GEMINI_API_KEY ANSIBLE_USER=$ANSIBLE_USER"
+        working-directory: ./ansible

@@ -2,31 +2,38 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Create directory for environment file
+    - name: Set environment variables for Python app (this might be unnecessary now)
+      shell: |
+        export APP_NAME={{ APP_NAME }}
+        export DOCKERHUB_USERNAME={{ DOCKERHUB_USERNAME }}
+        export TG_TOKEN={{ TG_TOKEN }}
+        export GEMINI_API_KEY={{ GEMINI_API_KEY }}
+        export ANSIBLE_USER={{ USERNAME }}
+      environment:
+        APP_NAME: "{{ APP_NAME }}"
+        DOCKERHUB_USERNAME: "{{ DOCKERHUB_USERNAME }}"
+        TG_TOKEN: "{{ TG_TOKEN }}"
+        GEMINI_API_KEY: "{{ GEMINI_API_KEY }}"
+        ANSIBLE_USER: "{{ USERNAME }}"
+
+    - name: Create directory for the app (if necessary)
       file:
-        path: /home/{{ ansible_user }}/dev/apps/{{ app_name }}
+        path: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}
         state: directory
         mode: '0755'
 
     - name: Remove existing container (if exists)
       shell: |
-        docker stop {{ app_name }} || true
-        docker rm {{ app_name }} || true
+        docker stop {{ APP_NAME }} || true
+        docker rm {{ APP_NAME }} || true
       ignore_errors: yes
 
     - name: Pull the latest Docker image
-      shell: docker pull {{ dockerhub_username }}/{{ app_name }}:latest
+      shell: docker pull {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
 
-    - name: Create environment file with secrets
-      copy:
-        dest: /home/{{ ansible_user }}/dev/apps/{{ app_name }}/app_env.env
-        content: |
-          TG_TOKEN={{ tg_token }}
-          GEMINI_API_KEY={{ gemini_api_key }}
-      mode: '0644'
-
-    - name: Run the new container
+    - name: Run the new container with environment variables
       shell: |
-        docker run -d --name {{ app_name }} \
-        --env-file /home/{{ ansible_user }}/dev/apps/{{ app_name }}/app_env.env \
-        {{ dockerhub_username }}/{{ app_name }}:latest
+        docker run -d --name {{ APP_NAME }} \
+        -e TG_TOKEN={{ TG_TOKEN }} \
+        -e GEMINI_API_KEY={{ GEMINI_API_KEY }} \
+        {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
