@@ -8,6 +8,12 @@
         state: directory
         mode: '0755'
 
+    - name: Create a directory for persistent storage (SQLite DB)
+      file:
+        path: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/db  # Create the db directory
+        state: directory
+        mode: '0755'
+
     - name: Create a .env file for the Python app
       copy:
         dest: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env
@@ -15,14 +21,8 @@
           APP_NAME={{ APP_NAME }}
           TG_TOKEN={{ TG_TOKEN }}
           GEMINI_API_KEY={{ GEMINI_API_KEY }}
-          DB_PATH=/app/data/bot_messages.db
+          DB_PATH=/app/db/bot_messages.db
       mode: '0644'
-
-    - name: Create directory for persistent storage (SQLite DB)
-      file:
-        path: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/data
-        state: directory
-        mode: '0755'
 
     - name: Remove existing container (if exists)
       shell: |
@@ -37,5 +37,5 @@
       shell: |
         docker run -d --name {{ APP_NAME }} \
         --env-file /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env \
-        -v /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/data:/app/data \
+        -v /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/db:/app/db \  # Ensure this points to the db directory
         {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
