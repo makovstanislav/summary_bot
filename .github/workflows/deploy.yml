@@ -42,12 +42,5 @@ jobs:
         working-directory: ./ansible
 
       - name: Run Ansible Playbook
-        env:
-          ANSIBLE_HOST_KEY_CHECKING: "False"
-          APP_NAME: pasha-bot
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          TG_TOKEN: ${{ secrets.TG_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ANSIBLE_USER: ${{ secrets.USERNAME }}
-        run: ansible-playbook -i inventory.yml playbook.yml --extra-vars "APP_NAME=$APP_NAME DOCKERHUB_USERNAME=$DOCKERHUB_USERNAME TG_TOKEN=$TG_TOKEN GEMINI_API_KEY=$GEMINI_API_KEY ANSIBLE_USER=$ANSIBLE_USER"
+        run: ansible-playbook -i inventory.yml playbook.yml --extra-vars "APP_NAME=pasha-bot DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }} TG_TOKEN=${{ secrets.TG_TOKEN }} GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }} ANSIBLE_USER=${{ secrets.USERNAME }}"
         working-directory: ./ansible
