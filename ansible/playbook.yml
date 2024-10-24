@@ -38,5 +38,5 @@
       shell: |
         docker run -d --name {{ APP_NAME }} \
         --env-file /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env \
-        -v /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/db:db \
+        -v /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/db:/{{ APP_NAME }}/db \
         {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
