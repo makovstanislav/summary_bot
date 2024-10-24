@@ -2,23 +2,25 @@
 - hosts: all
   become: yes
   tasks:
-    - name: Set environment variables for Python app (this might be unnecessary now)
-      shell: |
-        export APP_NAME={{ APP_NAME }}
-        export DOCKERHUB_USERNAME={{ DOCKERHUB_USERNAME }}
-        export TG_TOKEN={{ TG_TOKEN }}
-        export GEMINI_API_KEY={{ GEMINI_API_KEY }}
-        export USERNAME={{ USERNAME }}
-      environment:
-        APP_NAME: "{{ APP_NAME }}"
-        DOCKERHUB_USERNAME: "{{ DOCKERHUB_USERNAME }}"
-        TG_TOKEN: "{{ TG_TOKEN }}"
-        GEMINI_API_KEY: "{{ GEMINI_API_KEY }}"
-        USERNAME: "{{ USERNAME }}"
-
     - name: Create directory for the app (if necessary)
       file:
         path: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}
+        state: directory
+        mode: '0755'
+
+    - name: Create a .env file for the Python app
+      copy:
+        dest: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env
+        content: |
+          APP_NAME={{ APP_NAME }}
+          TG_TOKEN={{ TG_TOKEN }}
+          GEMINI_API_KEY={{ GEMINI_API_KEY }}
+          DB_PATH=/app/data/bot_messages.db
+      mode: '0644'
+
+    - name: Create directory for persistent storage (SQLite DB)
+      file:
+        path: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/data
         state: directory
         mode: '0755'
 
@@ -31,9 +33,9 @@
     - name: Pull the latest Docker image
       shell: docker pull {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
 
-    - name: Run the new container with environment variables
+    - name: Run the new container with .env file and persistent storage
       shell: |
         docker run -d --name {{ APP_NAME }} \
-        -e TG_TOKEN={{ TG_TOKEN }} \
-        -e GEMINI_API_KEY={{ GEMINI_API_KEY }} \
+        --env-file /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env \
+        -v /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/data:/app/data \
         {{ DOCKERHUB_USERNAME }}/{{ APP_NAME }}:latest
