@@ -5,5 +5,5 @@ load_dotenv()
 
 TG_TOKEN = os.getenv("TG_TOKEN")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-DB_PATH = os.getenv("DB_PATH", "db_data/bot_messages.db")  # Fallback to default if not set
+DB_PATH = os.getenv("DB_PATH")
 DAILY_SUMMARY_CHAT_ID = "-1002261651604"

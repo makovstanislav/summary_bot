@@ -1,0 +1,42 @@
+name: Check Container Execution
+
+on:
+  workflow_run:
+    workflows: ["Deploy Application"]
+    types:
+      - completed
+
+jobs:
+  check-container:
+    name: Verify Container Execution
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Add Private SSH Key for SSH Access
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          ANSIBLE_SSH_PRIVATE_KEY_FILE: ~/.ssh/id_rsa
+
+      - name: Update Ansible Inventory with Public IP
+        run: |
+          sed -i "s/{{ public_ip }}/${{ secrets.SERVER_IP }}/g" inventory.yml
+        working-directory: ./ansible
+
+      - name: Update Ansible Inventory with sudo user
+        run: |
+          sed -i "s/{{ sudo_user }}/${{ secrets.USERNAME }}/g" inventory.yml
+        working-directory: ./ansible
+
+      - name: Check if Container is Running
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.SERVER_IP }} \
+          "docker ps | grep {{ secrets.APP_NAME }}"
+        env:
+          ANSIBLE_SSH_PRIVATE_KEY_FILE: ~/.ssh/id_rsa
