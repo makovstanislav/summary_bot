@@ -14,16 +14,16 @@
         state: directory
         mode: '0755'
 
-    - name: Create a env file for the Python app
+    - name: Create an env file for the Python app
       copy:
         dest: /home/{{ USERNAME }}/dev/apps/{{ APP_NAME }}/.env
         content: |
           TG_TOKEN={{ TG_TOKEN }}
           GEMINI_API_KEY={{ GEMINI_API_KEY }}
           DB_PATH=/db/bot_messages.db
-      mode: '0644'
-      owner: "{{ USERNAME }}"
-      group: "{{ USERNAME }}"
+        mode: '0644'
+        owner: "{{ USERNAME }}"
+        group: "{{ USERNAME }}"
 
     - name: Remove existing container (if exists)
       shell: |
